@@ -1,0 +1,120 @@
+int pin = 6;  // this pin is the pin that reads from the sensor
+int led1 = D3;
+int led2 = D2;
+int led3 = D4;
+//unsigned long duration;
+unsigned long starttime;
+unsigned long sampletime_ms = 60000;  //Length of sampling time before it reports. 30,000=30 sec
+//unsigned long lowpulseoccupancy = 0;
+//float ratio = 0;
+//float concentration = 0;
+unsigned long triggerOnP2;
+unsigned long triggerOffP2;
+unsigned long pulseLengthP2;
+unsigned long durationP2;
+boolean valP2 = HIGH;
+boolean triggerP2 = false;
+
+//float ratioP1 = 0;
+float ratioP2 = 0;
+float PM25 = 0;
+
+TCPClient client;
+
+#define THINGNAME "penguine_mighty" //can be anything  This is for naming your device on dweet.io
+const String publicKey = "MG4zLJ08LLhMpVLJo7ja";  // for spark publishing.  They give you these codes when you start a stream at data.sparkfun.com
+const String privateKey = "nzDgXWGaXXT2vja7m0nr";  // for spark publishing
+
+void setup(){
+  // Serial.begin(9600);
+  pinMode(6,INPUT);
+  starttime = millis();//millis() is the on chip timer that starts running when the program starts running.  
+  //Tells you how many milliseconds since the program started
+}
+
+void loop(){
+      valP2 = digitalRead(6); 
+ 
+     if(valP2 == LOW && triggerP2 == false){
+    triggerP2 = true;
+    triggerOnP2 = micros();
+  }
+  
+    if (valP2 == HIGH && triggerP2 == true){
+      triggerOffP2 = micros();
+      pulseLengthP2 = triggerOffP2 - triggerOnP2;
+      durationP2 = durationP2 + pulseLengthP2;
+      triggerP2 = false;
+  }
+    if ((millis() - starttime) > sampletime_ms) {  //if the difference between what time it is right now and when this sample started is greater than our sample time
+     //than end this sample and report the data.  
+      
+   
+      ratioP2 = durationP2/(sampletime_ms*10.0);  // Integer percentage 0=>100   Percent of time this pin was triggered during sampling
+    
+   
+    PM25= ratioP2 * ratioP2 * .1809 + 3.8987 * ratioP2; // +2.5003;   //This is the calibration between the ratio and PM25.  Change this to calibrate the PM25 reading in ug/m3
+    
+    //this section controls what color the LED is at on different PM25 levels.
+        if (PM25 < 10) 
+    {
+        digitalWrite(led2, LOW);
+        digitalWrite(led1, HIGH);
+        
+    }
+ if (PM25 <20 && PM25 > 10)
+ {
+        digitalWrite(led1, LOW);
+        digitalWrite(led2, HIGH);
+        
+    }
+    //ends the LED control section
+    
+        if (client.connect("dweet.io", 80))  //http://dweet.io/follow/thingname  to see results in the browser
+    {
+ 
+ client.print("GET /dweet/for/");
+      client.print(THINGNAME);
+      client.print("?ratioP2=");  // Don't use spaces for data names
+      client.print(ratioP2);
+      client.print("&PM25=");  // Don't use spaces for data names
+     client.print(PM25);
+      client.println(" HTTP/1.1");
+      client.println("Host: dweet.io");
+      client.println("Connection: close");
+      client.println();
+           } 
+           
+            if (client.connect("data.sparkfun.com", 80)) {
+ 
+    // Post the data! Request should look a little something like:
+    // GET /input/publicKey?private_key=privateKey&light=1024&switch=0&name=Jim HTTP/1.1\n
+        //https://data.sparkfun.com/streams/publickeygoeshere/  to see on browser
+    client.print("GET /input/");
+  client.print(publicKey);
+ client.print("?private_key=");
+ client.print(privateKey);
+ client.print("&pm25=");  //seems like you must use lower case labels
+ client.print(PM25);
+ client.print("&ratiop2=");
+ client.print(ratioP2);
+    client.println(" HTTP/1.1");
+    client.print("Host: ");
+    client.println("data.sparkfun.com");
+    client.println("Connection: close");
+    client.println();
+  }
+  
+   durationP2 = 0;
+      starttime = millis();
+    //lowpulseoccupancy = 0;
+    //duration = 0; //resets the lowpulseoccupancy back to zero to start the next sample
+    //starttime = millis();  // 
+      
+}
+    
+    }
+    
+
+    
+  
