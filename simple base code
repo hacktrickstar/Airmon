@@ -21,9 +21,9 @@ float PM25 = 0;
 
 TCPClient client;
 
-#define THINGNAME "penguine_mighty" //can be anything  This is for naming your device on dweet.io
-const String publicKey = "MG4zLJ08LLhMpVLJo7ja";  // for spark publishing.  They give you these codes when you start a stream at data.sparkfun.com
-const String privateKey = "nzDgXWGaXXT2vja7m0nr";  // for spark publishing
+#define THINGNAME "penguin_mighty" //can be anything  This is for naming your device on dweet.io
+const String publicKey = "MG4zLJ08aahMpVLJo7ja";  // for spark publishing.  They give you these codes when you start a stream at data.sparkfun.com
+const String privateKey = "nzDgXWGaaXT2vja7m0nr";  // for spark publishing
 
 void setup(){
   // Serial.begin(9600);
