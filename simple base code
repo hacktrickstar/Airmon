@@ -56,7 +56,7 @@ void setup()
     
 }
 
-void loop(){
+void loop(){ // Sensor reading code written by Matthew Schroyer, MentalMunition.com
       valP2 = digitalRead(SensorPin); //Now I am listening to pin 6.  It has two options "high" or "low"
  
      if(valP2 == LOW && triggerP2 == false){
