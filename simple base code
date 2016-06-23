@@ -120,7 +120,7 @@ void loop(){ // Sensor reading code written by Matthew Schroyer, MentalMunition.
     
     // Starts the section that will publish the results to DWEET, like twitter for devices
     if (client.connect("dweet.io", 80))  
-    // Go to  http://dweet.io/follow/thingname  to see the results in your browser. change "thingname" to your thingname
+    // Go to  http://dweet.io/follow/thingname  to see the results in your browser. change "thingname" to your thingname in the web address.
     {
  
       client.print("GET /dweet/for/");
@@ -161,7 +161,7 @@ void loop(){ // Sensor reading code written by Matthew Schroyer, MentalMunition.
   
    durationP2 = 0;  //resets the lowpulseoccupancy back to zero to start the next sample
       starttime = millis(); // set the start time to what time it is now.  
-      // go back to the body and start sampling again
+      // go back to the top of the loop and start sampling again
     
 }
     
