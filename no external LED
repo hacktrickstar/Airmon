@@ -1,3 +1,6 @@
+//This code does not need an external LED.  It uses the RGB LED on the photon as the color indicator.  I left the code in that controls the
+// the external LED so you can run both if you would like.
+
 //This section tells the computer the name of all the variables that I am going to use in this program
 //and what they are going to do
 int SensorPin = D6;  // this pin is the pin that reads from the sensor
